@@ -4,10 +4,11 @@
 class stack
 {
 private:
-    int* data;
     int capacity;
     int size;
 public:
+    int* data;
+
     stack();
     ~stack();
     void push(int value);

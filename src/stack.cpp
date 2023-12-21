@@ -52,7 +52,7 @@ int stack::getsize() const
 }
 int stack::top() const {
     if (bosmu()) {
-        return 0; // Hata durumu için 0 değeri dönebilirsiniz.
+        return 0;
     }
     return data[size - 1];
 }
