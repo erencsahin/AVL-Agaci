@@ -19,6 +19,7 @@ private:
 public:
     avlNode *kok;
     stack yaprakstack;
+    char asciikarakter;
     avlTree();
     bool bosmu()const;
     void ekle(const int&);
@@ -26,6 +27,8 @@ public:
     void readData(const string& fileName, avlTree &tree);
     void postorder(avlNode*);
     avlNode* kokugetir();
+    int Tumdugumlertopla(avlNode* kok);
+    int yaprakdugumleritopla(avlNode* kok);
     void postorderyazdir();
     void yaprakDugumleribul(avlNode*,stack&);
     void yaprakDugumleriBulVeStackeEkle(stack&);
@@ -34,7 +37,11 @@ public:
     int yaprakDugumuOlmayanToplam();
     int yaprakDugumuOlmayanToplamHelper(avlNode* altdugum);
     int enkucukcikar(stack** stackdizisi, int agacsayisi);
-    void stackiSil(stack** stackdizisi, avlTree** agacdizisi, int& agacsayisi, int silinecekIndex);
+    //void stackiSil(stack** stackdizisi, avlTree** agacdizisi, int& agacsayisi, int silinecekIndex);
+    void stackiSil(avlTree**& agacdizisi, stack**& stackdizisi, int& agacsayisi, int silinecekIndex);
+    void setasciikarakter(char karakter);
+    char getasciikarakter() const ;
+    
 };
 
 #endif

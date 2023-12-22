@@ -118,6 +118,29 @@ avlNode *avlTree::kokugetir()
     return kok;
 }
 
+int avlTree::Tumdugumlertopla(avlNode* kok)
+{
+    if (kok==nullptr)
+    {
+        return -1;
+    }
+    return kok->data+ Tumdugumlertopla(kok->sol) + Tumdugumlertopla(kok->sag);
+    
+}
+
+int avlTree::yaprakdugumleritopla(avlNode* kok)
+{
+    if (kok==nullptr)
+    {
+        return -1;
+    }
+    if (kok->sag==nullptr && kok->sol==nullptr)
+    {
+        return kok->data;
+    }
+    return yaprakdugumleritopla(kok->sol)+ yaprakdugumleritopla(kok->sag);
+}
+
 void avlTree::readData(const string &fileName, avlTree &agac)
 {
     ifstream file(fileName); // Dosyayı aç
@@ -226,31 +249,38 @@ int avlTree::enkucukcikar(stack** stackdizisi,int agacsayisi)
     }
     if (!stackdizisi[enkucukstackinindexi]->bosmu())
     {
-        cout<<stackdizisi[enkucukstackinindexi]->top()<<" cikarildi"<<endl;
+        //cout<<stackdizisi[enkucukstackinindexi]->top()<<" cikarildi"<<endl;
         stackdizisi[enkucukstackinindexi]->pop();
     }
     
     return enkucuk;
 }
 
-void avlTree::stackiSil(stack** stackdizisi, avlTree** agacdizisi, int& agacsayisi, int silinecekIndex) {
+void avlTree::stackiSil(avlTree**& agacdizisi, stack**& stackdizisi, int& agacsayisi, int silinecekIndex) {
     if (silinecekIndex < 0 || silinecekIndex >= agacsayisi) {
-        cout << "Hata: Geçersiz indeks!" << endl;
+        //cout << "Hata: Geçersiz indeks!" << endl;
         return;
     }
 
     delete stackdizisi[silinecekIndex];
     delete agacdizisi[silinecekIndex];
 
-    // Silinen elemanın üzerine kayan elemanları taşı
+    // Elemanları sildikten sonra dizilerden çıkar
     for (int i = silinecekIndex; i < agacsayisi - 1; ++i) {
         stackdizisi[i] = stackdizisi[i + 1];
         agacdizisi[i] = agacdizisi[i + 1];
     }
 
     // Boyutları güncelle
-    stackdizisi[agacsayisi - 1] = nullptr;
-    agacdizisi[agacsayisi - 1] = nullptr;
     --agacsayisi;
 }
 
+void avlTree::setasciikarakter(char karakter)
+{
+    asciikarakter=karakter;
+}
+
+char avlTree::getasciikarakter()const 
+{
+    return asciikarakter;
+}
