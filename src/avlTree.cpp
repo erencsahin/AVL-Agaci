@@ -1,10 +1,10 @@
-#include "avlNode.hpp"
-#include "avlTree.hpp"
 #include <iostream>
 #include <cmath>
 #include "fstream"
 #include "sstream"
 #include <string>
+#include "avlNode.hpp"
+#include "avlTree.hpp"
 using namespace std;
 
 avlTree::avlTree()
@@ -211,3 +211,46 @@ int avlTree::yaprakDugumuOlmayanToplamHelper(avlNode* altdugum)
 
     return altdugum->data + solToplam + sagToplam;
 }
+
+int avlTree::enkucukcikar(stack** stackdizisi,int agacsayisi)
+{
+    int enkucuk=stackdizisi[0]->top();
+    int enkucukstackinindexi=0;
+    for (int i = 0; i < agacsayisi; i++)
+    {
+        if (!stackdizisi[i]->bosmu()&& stackdizisi[i]->top()<enkucuk)
+        {
+            enkucuk=stackdizisi[i]->top();
+            enkucukstackinindexi=i;
+        }
+    }
+    if (!stackdizisi[enkucukstackinindexi]->bosmu())
+    {
+        cout<<stackdizisi[enkucukstackinindexi]->top()<<" cikarildi"<<endl;
+        stackdizisi[enkucukstackinindexi]->pop();
+    }
+    
+    return enkucuk;
+}
+
+void avlTree::stackiSil(stack** stackdizisi, avlTree** agacdizisi, int& agacsayisi, int silinecekIndex) {
+    if (silinecekIndex < 0 || silinecekIndex >= agacsayisi) {
+        cout << "Hata: Geçersiz indeks!" << endl;
+        return;
+    }
+
+    delete stackdizisi[silinecekIndex];
+    delete agacdizisi[silinecekIndex];
+
+    // Silinen elemanın üzerine kayan elemanları taşı
+    for (int i = silinecekIndex; i < agacsayisi - 1; ++i) {
+        stackdizisi[i] = stackdizisi[i + 1];
+        agacdizisi[i] = agacdizisi[i + 1];
+    }
+
+    // Boyutları güncelle
+    stackdizisi[agacsayisi - 1] = nullptr;
+    agacdizisi[agacsayisi - 1] = nullptr;
+    --agacsayisi;
+}
+

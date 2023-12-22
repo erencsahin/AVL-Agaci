@@ -56,3 +56,4 @@ int stack::top() const {
     }
     return data[size - 1];
 }
+

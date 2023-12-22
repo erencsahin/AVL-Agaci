@@ -33,6 +33,8 @@ public:
     bool araHelper(avlNode *altdugum, const int &item);
     int yaprakDugumuOlmayanToplam();
     int yaprakDugumuOlmayanToplamHelper(avlNode* altdugum);
+    int enkucukcikar(stack** stackdizisi, int agacsayisi);
+    void stackiSil(stack** stackdizisi, avlTree** agacdizisi, int& agacsayisi, int silinecekIndex);
 };
 
 #endif
