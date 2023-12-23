@@ -122,7 +122,7 @@ int avlTree::Tumdugumlertopla(avlNode* kok)
 {
     if (kok==nullptr)
     {
-        return -1;
+        return 0;
     }
     return kok->data+ Tumdugumlertopla(kok->sol) + Tumdugumlertopla(kok->sag);
     
@@ -132,7 +132,7 @@ int avlTree::yaprakdugumleritopla(avlNode* kok)
 {
     if (kok==nullptr)
     {
-        return -1;
+        return 0;
     }
     if (kok->sag==nullptr && kok->sol==nullptr)
     {
@@ -235,32 +235,90 @@ int avlTree::yaprakDugumuOlmayanToplamHelper(avlNode* altdugum)
     return altdugum->data + solToplam + sagToplam;
 }
 
-int avlTree::enkucukcikar(stack** stackdizisi,int agacsayisi)
+int avlTree::enkucukcikar(stack** stackdizisi, avlTree**& agacdizisi, int& agacsayisi)
 {
-    int enkucuk=stackdizisi[0]->top();
-    int enkucukstackinindexi=0;
+    int enkucuk = stackdizisi[0]->top();
+    int enkucukstackinindexi = 0;
+
     for (int i = 0; i < agacsayisi; i++)
     {
-        if (!stackdizisi[i]->bosmu()&& stackdizisi[i]->top()<enkucuk)
+        if (!stackdizisi[i]->bosmu() && stackdizisi[i]->top() < enkucuk)
         {
-            enkucuk=stackdizisi[i]->top();
-            enkucukstackinindexi=i;
+            enkucuk = stackdizisi[i]->top();
+            enkucukstackinindexi = i;
         }
     }
+
     if (!stackdizisi[enkucukstackinindexi]->bosmu())
     {
-        //cout<<stackdizisi[enkucukstackinindexi]->top()<<" cikarildi"<<endl;
-        stackdizisi[enkucukstackinindexi]->pop();
+        if (stackdizisi[enkucukstackinindexi]->bosmu())
+        {
+            delete stackdizisi[enkucukstackinindexi];
+            delete agacdizisi[enkucukstackinindexi];
+
+            // Elemanları sildikten sonra dizilerden çıkar
+            for (int i = enkucukstackinindexi; i < agacsayisi - 1; ++i)
+            {
+                stackdizisi[i] = stackdizisi[i + 1];
+                agacdizisi[i] = agacdizisi[i + 1];
+            }
+
+            // Boyutları güncelle
+            --agacsayisi;
+        }
+
+        return enkucuk;
     }
-    
-    return enkucuk;
+    else
+    {
+        return 0;
+    }
+}
+
+int avlTree::enbuyukcikar(stack** stackdizisi, avlTree**& agacdizisi, int& agacsayisi)
+{
+    int enbuyuk = stackdizisi[0]->top();
+    int enbuyukstackinindexi = 0;
+
+    for (int i = 0; i < agacsayisi; i++)
+    {
+        if (!stackdizisi[i]->bosmu() && stackdizisi[i]->top() > enbuyuk)
+        {
+            enbuyuk = stackdizisi[i]->top();
+            enbuyukstackinindexi = i;
+        }
+    }
+
+    if (!stackdizisi[enbuyukstackinindexi]->bosmu())
+    {
+        if (stackdizisi[enbuyukstackinindexi]->bosmu())
+        {
+            delete stackdizisi[enbuyukstackinindexi];
+            delete agacdizisi[enbuyukstackinindexi];
+            
+            // Elemanları sildikten sonra dizilerden çıkar
+            for (int i = enbuyukstackinindexi; i < agacsayisi - 1; ++i)
+            {
+                stackdizisi[i] = stackdizisi[i + 1];
+                agacdizisi[i] = agacdizisi[i + 1];
+            }
+
+            // Boyutları güncelle
+            --agacsayisi;
+        }
+
+        return enbuyuk;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void avlTree::stackiSil(avlTree**& agacdizisi, stack**& stackdizisi, int& agacsayisi, int silinecekIndex) {
-    if (silinecekIndex < 0 || silinecekIndex >= agacsayisi) {
-        //cout << "Hata: Geçersiz indeks!" << endl;
-        return;
-    }
+
+    cout<<" "<<agacdizisi[silinecekIndex]->kokugetir()->data;
+    
 
     delete stackdizisi[silinecekIndex];
     delete agacdizisi[silinecekIndex];
@@ -273,14 +331,4 @@ void avlTree::stackiSil(avlTree**& agacdizisi, stack**& stackdizisi, int& agacsa
 
     // Boyutları güncelle
     --agacsayisi;
-}
-
-void avlTree::setasciikarakter(char karakter)
-{
-    asciikarakter=karakter;
-}
-
-char avlTree::getasciikarakter()const 
-{
-    return asciikarakter;
 }
