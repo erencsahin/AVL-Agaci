@@ -1,109 +1,9 @@
-
-/*
-
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <limits.h>
 #include "avlNode.hpp"
 #include "avlTree.hpp"
-#include <sstream>
-#include <fstream>
-using namespace std;
-
-
-
-int main()
-{
-    ifstream dosya("vsd.txt");
-    string satir;
-    const int agacsayisikapasitesi = 500;
-    int agacsayisi=0;
-    avlTree** agacdizisi= new avlTree*[agacsayisikapasitesi];
-    stack** stackdizisi=new stack*[agacsayisikapasitesi];
-    
-    avlTree avl;
-    for (int i = 0; i < agacsayisi; i++) {
-        agacdizisi[i] = new avlTree();
-        stackdizisi[i] = new stack();
-    }
-
-    int agacindex = 0;
-
-    while (getline(dosya, satir)) {
-        istringstream ss(satir);
-        int sayi;
-        
-        
-
-        if (agacsayisi==agacsayisikapasitesi)
-        {
-            const int agacsayisikapasitesi = agacsayisikapasitesi*2;
-            avlTree** tmp_agacdizisi=new avlTree*[agacsayisikapasitesi];
-            stack** tmp_stackdizisi=new stack*[agacsayisikapasitesi];
-            for (int i = 0; i < agacsayisi; ++i)
-            {
-                tmp_agacdizisi[i]=agacdizisi[i];
-                tmp_stackdizisi[i]=stackdizisi[i];
-            }
-            delete[] agacdizisi;
-            delete[] stackdizisi;
-
-            agacdizisi=tmp_agacdizisi;
-            stackdizisi=tmp_stackdizisi;            
-        }
-        agacdizisi[agacindex]=new avlTree();
-        stackdizisi[agacindex]=new stack();
-
-        while (ss >> sayi) {
-            agacdizisi[agacindex]->ekle(sayi);
-            
-        }
-        int tumtoplam=avl.Tumdugumlertopla(avl.kok);
-        int yapraktoplam= avl.yaprakdugumleritopla(avl.kok);
-        int ascii=tumtoplam-yapraktoplam%(90-65+1)+65;
-        cout<< char(ascii);
-
-        agacdizisi[agacindex]->yaprakDugumleriBulVeStackeEkle(*stackdizisi[agacindex]);
-        agacindex = (agacindex + 1) % agacsayisikapasitesi;
-        ++agacsayisi;
-        
-    }
-
-    
-    int silinecekIndex=0;
-    while (true)
-    {
-        int cikarilandeger=agacdizisi[silinecekIndex]->enkucukcikar(stackdizisi,agacsayisi);
-        if (cikarilandeger==0)
-        {
-            avl.stackiSil(agacdizisi, stackdizisi, agacsayisi, silinecekIndex);
-            break;
-        }
-        else
-        {
-            cout<<"cikarilan deger: "<<cikarilandeger<<endl;
-        }
-    }
-
-    for (int i = 0; i < agacsayisi; i++) {
-        if (!stackdizisi[i]->bosmu()) {
-            cout << "Stack " << i + 1 << ": " << stackdizisi[i]->top() << endl;
-        }
-    }
-    
-    delete[] agacdizisi;
-    delete[] stackdizisi;
-    
-    
-    dosya.close();
-    return 0;
-}
-*/
-// main.cpp
-// main.cpp
-#include <iostream>
-#include "avlNode.hpp"
-#include "avlTree.hpp"
-#include <sstream>
-#include <fstream>
 #include "stack.hpp"
 
 using namespace std;
@@ -115,18 +15,45 @@ int calculateAsciiValue(avlTree* tree) {
     return (totalSum - leafSum) % (90 - 65 + 1) + 65;
 }
 
+// Ekranı temizleyen fonksiyon
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void printTreesAndStacks(avlTree** agacdizisi, stack** stackdizisi, int agacsayisi) {
+    //cout << "agac:" << endl;
+    for (int i = 0; i < agacsayisi; ++i) {
+        if (agacdizisi[i] != nullptr) {
+            int ascii = calculateAsciiValue(agacdizisi[i]);
+            cout << char(ascii);
+        }
+    }
+
+    //cout << "Stack'ler:" << endl;
+    /*for (int i = 0; i < agacsayisi; ++i) {
+        //cout << "Stack " << i + 1 << ": ";
+        if (stackdizisi[i] != nullptr && !stackdizisi[i]->bosmu()) {
+            cout << stackdizisi[i]->top();
+        }
+        cout << endl;
+    }*/
+}
+
 int main() {
-    ifstream dosya("vsd.txt");
+    ifstream dosya("sayilar.txt");
     string satir;
     const int agacsayisikapasitesi = 500;
-    int agacsayisi = 0;
     avlTree** agacdizisi = new avlTree*[agacsayisikapasitesi];
     stack** stackdizisi = new stack*[agacsayisikapasitesi];
     avlTree avl;
 
     for (int i = 0; i < agacsayisikapasitesi; i++) {
-        agacdizisi[i] = new avlTree();
-        stackdizisi[i] = new stack();
+        agacdizisi[i] = nullptr;
+        stackdizisi[i] = nullptr;
     }
 
     int agacindex = 0;
@@ -134,10 +61,6 @@ int main() {
     while (getline(dosya, satir)) {
         istringstream ss(satir);
         int sayi;
-
-        if (agacsayisi == agacsayisikapasitesi) {
-            // TODO: Ağaç kapasitesi dolarsa yapılacak işlemler
-        }
 
         agacdizisi[agacindex] = new avlTree();
         stackdizisi[agacindex] = new stack();
@@ -147,52 +70,88 @@ int main() {
         }
 
         int ascii = calculateAsciiValue(agacdizisi[agacindex]);
-        cout << char(ascii) << endl;
+        cout << char(ascii);
 
         agacdizisi[agacindex]->yaprakDugumleriBulVeStackeEkle(*stackdizisi[agacindex]);
         agacindex = (agacindex + 1) % agacsayisikapasitesi;
-        agacsayisi++;
     }
+    cout << endl;
 
-    for (int i = 0; i < agacsayisi; i++)
-    {
-        while (!stackdizisi[i]->bosmu()) {
-        int enbuyuk=0;
-        int enkucuk=500;
-            for (int i = 0; i < agacsayisi; i++)
-            {
-                cout<<"asdasdasd";
-                if (agacsayisi%2==0)
-                {
-                    if (stackdizisi[i]->top()<=enkucuk)  //en kucuk.
-                    {
-                        cout<<"cikarilan ENKUCUK deger: "<<stackdizisi[i]->top()<<endl;
-                        stackdizisi[i]->pop();
-                        enkucuk=stackdizisi[i]->top();
-                    }
-                    
-                }
-                if (agacsayisi%2==1)
-                {
-                    if (stackdizisi[i]->top()>=enbuyuk)
-                    {
-                        stackdizisi[i]->pop();
-                        cout<<"cikarilan enbuyuk deger: "<<stackdizisi[i]->top()<<endl;
-                        enbuyuk=stackdizisi[i]->top();
-                    }
-                    
-                }
+    bool devam = true;
+    while (devam) {
+        int enkucuk = INT_MAX;
+        int enbuyuk = INT_MIN;
+        int bosStackSayisi = 0;
+        int silinenAgacIndex = -1;
+
+        // Tüm stack'lerin en üstündeki değerleri karşılaştırma
+        for (int i = 0; i < agacsayisikapasitesi; ++i) {
+            if (stackdizisi[i] != nullptr && !stackdizisi[i]->bosmu()) {
+                int tepeDeger = stackdizisi[i]->top();
+                enkucuk = min(enkucuk, tepeDeger);
+                enbuyuk = max(enbuyuk, tepeDeger);
+            } else {
+                bosStackSayisi++;
             }
         }
+
+        // Tüm stack'ler boşsa döngüden çık
+        if (bosStackSayisi == agacsayisikapasitesi) {
+            break;
+        }
+
+        // En küçüğü ve en büyüğü çıkarma
+        for (int i = 0; i < agacsayisikapasitesi; ++i) {
+            if (stackdizisi[i] != nullptr && !stackdizisi[i]->bosmu() && stackdizisi[i]->top() == enkucuk) {
+                stackdizisi[i]->pop();
+                cout << " " << i + 1 << ". indisten cikarilan ENKUCUK deger: " << enkucuk << endl;
+                if (stackdizisi[i]->bosmu()) {
+                    // Stack boşsa ağacı sil
+                    silinenAgacIndex = i;
+                    delete agacdizisi[silinenAgacIndex];
+                    agacdizisi[silinenAgacIndex] = nullptr;
+                }
+                break;
+            }
+        }
+
+        for (int i = 0; i < agacsayisikapasitesi; ++i) {
+            if (stackdizisi[i] != nullptr && !stackdizisi[i]->bosmu() && stackdizisi[i]->top() == enbuyuk) {
+                stackdizisi[i]->pop();
+                cout << " " << i + 1 << ". indisten cikarilan enbuyuk deger: " << enbuyuk << endl;
+                if (stackdizisi[i]->bosmu()) {
+                    // Stack boşsa ağacı sil
+                    silinenAgacIndex = i;
+                    delete agacdizisi[silinenAgacIndex];
+                    agacdizisi[silinenAgacIndex] = nullptr;
+                }
+                break;
+            }
+        }
+
+        // Herhangi bir stack boşsa döngüden çık
+        devam = false;
+        for (int i = 0; i < agacsayisikapasitesi; ++i) {
+            if (stackdizisi[i] != nullptr && !stackdizisi[i]->bosmu()) {
+                devam = true;
+                break;
+            }
+        }
+
+        // Ekranı temizleme işlemi
+        clearScreen();
+
+        // Silinen ağacı hariç tüm ağaçları ve stack'leri yazdırma
+        printTreesAndStacks(agacdizisi, stackdizisi, agacsayisikapasitesi);
+        //_sleep(2000);
     }
-    
-    
 
     // Belleği temizle
-    for (int i = 0; i < agacsayisi; ++i) {
+    for (int i = 0; i < agacsayisikapasitesi; ++i) {
         delete agacdizisi[i];
         delete stackdizisi[i];
     }
+
     delete[] agacdizisi;
     delete[] stackdizisi;
 

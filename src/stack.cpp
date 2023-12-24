@@ -43,7 +43,16 @@ int stack::pop()
 
 bool stack::bosmu() const
 {
-    return size==0;
+    if (size==0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+    
+     
 }
 
 int stack::getsize() const 
